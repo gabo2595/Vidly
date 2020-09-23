@@ -10,5 +10,7 @@ namespace DataAccessInterface.Interfaces
         void Create(Category category);
         void Update(Category category);
         void Delete(Category category);
+        bool Exists(int id);
+        bool SaveChanges();
     }
 }

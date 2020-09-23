@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using BusinessLogicInterface.Interfaces;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Models.Out;
+using Model.In;
+using Model.Out;
 
 namespace WebApi.Controllers
 {
@@ -38,6 +40,60 @@ namespace WebApi.Controllers
             }
 
             return Ok(new CategoryDetailInfoModel(category));
+        }
+
+        // POST: api/categories
+        [HttpPost]
+        public ActionResult<CategoryModel> CreateCategory(Category category)
+        {
+            this.categoriesLogic.Create(category);
+            this.categoriesLogic.SaveChanges();
+
+            var newCategory = new CategoryModel(category);
+
+            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, newCategory);
+        }
+
+        // PUT: api/categories/{id}
+        [HttpPut("{id}")]
+        public ActionResult UpdateCategory(int id, Category category)
+        {
+            if (id != category.Id)
+            {
+                return BadRequest();
+            }
+
+            if (!CategoryExists(id))
+            {
+                return NotFound();
+            }
+
+            this.categoriesLogic.Update(category);
+            this.categoriesLogic.SaveChanges();
+
+            return NoContent();
+        }
+
+        //DELETE api/categories/{id}
+        [HttpDelete("{id}")]
+        public ActionResult DeleteCommand(int id)
+        {
+            var category = this.categoriesLogic.GetById(id);
+
+            if(category == null)
+            {
+                return NotFound();
+            }
+
+            this.categoriesLogic.Delete(category);
+            this.categoriesLogic.SaveChanges();
+
+            return NoContent();
+        }
+
+        private bool CategoryExists(int id)
+        {
+            return categoriesLogic.Exists(id);
         }
     }
 }

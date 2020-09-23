@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BusinessLogicInterface.Interfaces;
@@ -17,12 +18,22 @@ namespace BusinessLogic.Logics
 
         public void Create(Category category)
         {
-            throw new System.NotImplementedException();
+            if(category == null)
+            {
+                throw new ArgumentNullException(nameof(category));
+            }
+
+            this.categoriesRepository.Create(category);
         }
 
         public void Delete(Category category)
         {
-            throw new System.NotImplementedException();
+            this.categoriesRepository.Delete(category);
+        }
+
+        public bool Exists(int id)
+        {
+            return this.categoriesRepository.Exists(id);
         }
 
         public IEnumerable<Category> GetAll()
@@ -35,9 +46,19 @@ namespace BusinessLogic.Logics
             return this.categoriesRepository.GetById(id);
         }
 
+        public bool SaveChanges()
+        {
+            return this.categoriesRepository.SaveChanges();
+        }
+
         public void Update(Category category)
         {
-            throw new System.NotImplementedException();
+            if(category == null)
+            {
+                throw new ArgumentNullException(nameof(category));
+            }
+
+            this.categoriesRepository.Update(category);
         }
   }
 }

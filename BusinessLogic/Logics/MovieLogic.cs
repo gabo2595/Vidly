@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BusinessLogicInterface.Interfaces;
@@ -17,12 +18,22 @@ namespace BusinessLogic.Logics
 
         public void Create(Movie movie)
         {
-            throw new System.NotImplementedException();
+            if(movie == null)
+            {
+                throw new ArgumentNullException(nameof(movie));
+            }
+
+            this.moviesRepository.Create(movie);
         }
 
         public void Delete(Movie movie)
         {
-            throw new System.NotImplementedException();
+            this.moviesRepository.Delete(movie);
+        }
+
+        public bool Exists(int id)
+        {
+            return this.moviesRepository.Exists(id);
         }
 
         public IEnumerable<Movie> GetAll()
@@ -35,9 +46,19 @@ namespace BusinessLogic.Logics
             return this.moviesRepository.GetById(id);
         }
 
+        public bool SaveChanges()
+        {
+            return this.moviesRepository.SaveChanges();
+        }
+
         public void Update(Movie movie)
         {
-            throw new System.NotImplementedException();
+            if(movie == null)
+            {
+                throw new ArgumentNullException(nameof(movie));
+            }
+
+            this.moviesRepository.Update(movie);
         }
   }
 }

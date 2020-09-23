@@ -19,12 +19,17 @@ namespace DataAccess.Repositories
 
         public void Create(Category category)
         {
-            throw new System.NotImplementedException();
+            this.categories.Add(category);
         }
 
         public void Delete(Category category)
         {
-            throw new System.NotImplementedException();
+            this.categories.Remove(category);
+        }
+
+        public bool Exists(int id)
+        {
+            return this.categories.Any(c => c.Id == id);
         }
 
         public IEnumerable<Category> GetAll()
@@ -37,9 +42,14 @@ namespace DataAccess.Repositories
             return this.categories.FirstOrDefault(c => c.Id == id);
         }
 
+        public bool SaveChanges()
+        {
+            return (this.vidlyContext.SaveChanges() >= 0);
+        }
+
         public void Update(Category category)
         {
-            throw new System.NotImplementedException();
+            this.vidlyContext.Entry(category).State = EntityState.Modified;
         }
   }
 }

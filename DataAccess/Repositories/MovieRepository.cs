@@ -19,12 +19,17 @@ namespace DataAccess.Repositories
 
         public void Create(Movie movie)
         {
-            throw new System.NotImplementedException();
+            this.movies.Add(movie);
         }
 
         public void Delete(Movie movie)
         {
-            throw new System.NotImplementedException();
+            this.movies.Remove(movie);
+        }
+
+        public bool Exists(int id)
+        {
+            return this.movies.Any(m => m.Id == id);
         }
 
         public IEnumerable<Movie> GetAll()
@@ -37,9 +42,14 @@ namespace DataAccess.Repositories
             return this.movies.FirstOrDefault(m => m.Id == id);
         }
 
+        public bool SaveChanges()
+        {
+            return (this.vidlyContext.SaveChanges() >= 0);
+        }
+
         public void Update(Movie movie)
         {
-            throw new System.NotImplementedException();
+            this.vidlyContext.Entry(movie).State = EntityState.Modified;
         }
   }
 }

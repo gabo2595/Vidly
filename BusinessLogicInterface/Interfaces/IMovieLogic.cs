@@ -10,5 +10,7 @@ namespace BusinessLogicInterface.Interfaces
         void Create(Movie movie);
         void Update(Movie movie);
         void Delete(Movie movie);
+        bool Exists(int id);
+        bool SaveChanges();
     }
 }

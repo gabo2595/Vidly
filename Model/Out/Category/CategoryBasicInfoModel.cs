@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Domain.Entities;
 
-namespace Models.Out
+namespace Model.Out
 {
     public class CategoryBasicInfoModel
     {
