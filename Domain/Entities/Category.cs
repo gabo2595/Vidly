@@ -10,6 +10,6 @@ namespace Domain.Entities
         [Required]
         public string Name { get; set; }
 
-        public virtual List<Movie> Movies { get; set; }
+        public virtual List<CategoryMovie> CategoriesMovies { get; set; }
     }
 }

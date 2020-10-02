@@ -16,24 +16,30 @@ namespace BusinessLogic.Logics
             this.categoriesRepository = categoriesRepository;
         }
 
-        public void Create(Category category)
+        public Category Add(Category category)
         {
             if(category == null)
             {
                 throw new ArgumentNullException(nameof(category));
             }
 
-            this.categoriesRepository.Create(category);
+            this.categoriesRepository.Add(category);
+            this.categoriesRepository.SaveChanges();
+
+            return category;
         }
 
-        public void Delete(Category category)
+        public void Delete(int id)
         {
+            var category = this.GetById(id);
+
+            if(category == null)
+            {
+                throw new ArgumentException("Category doesn't exist", "Id:" + id);
+            }
+
             this.categoriesRepository.Delete(category);
-        }
-
-        public bool Exists(int id)
-        {
-            return this.categoriesRepository.Exists(id);
+            this.categoriesRepository.SaveChanges();
         }
 
         public IEnumerable<Category> GetAll()
@@ -43,22 +49,32 @@ namespace BusinessLogic.Logics
 
         public Category GetById(int id)
         {
-            return this.categoriesRepository.GetById(id);
+            var category = this.categoriesRepository.GetById(id);
+
+            if(category == null)
+            {
+                throw new ArgumentException(nameof(category), "Category doesn't exist");
+            }
+
+            return category;
         }
 
-        public bool SaveChanges()
-        {
-            return this.categoriesRepository.SaveChanges();
-        }
-
-        public void Update(Category category)
+        public void Update(int id, Category category)
         {
             if(category == null)
             {
                 throw new ArgumentNullException(nameof(category));
             }
 
-            this.categoriesRepository.Update(category);
+            if(!this.categoriesRepository.Exists(id))
+            {
+                throw new ArgumentException("Category doesn't exist", "Id:" + id);
+            }
+
+            var categoryToUpdate = this.GetById(id);
+
+            this.categoriesRepository.Update(categoryToUpdate);
+            this.categoriesRepository.SaveChanges();
         }
   }
 }

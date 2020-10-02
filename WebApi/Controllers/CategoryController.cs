@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BusinessLogicInterface.Interfaces;
@@ -21,56 +22,56 @@ namespace WebApi.Controllers
 
         // GET: api/categories
         [HttpGet]
-        public ActionResult<IEnumerable<CategoryBasicInfoModel>> GetAllCategories()
+        public IActionResult Get()
         {
-            var categories = categoriesLogic.GetAll();
-            
-            return Ok(categories.Select(m => new CategoryBasicInfoModel(m)).ToList());
+            try
+            {
+                var categories = this.categoriesLogic.GetAll();
+                return Ok(categories.Select(c => new CategoryBasicInfoModel(c)).ToList());
+            }
+            catch(ArgumentNullException)
+            {
+                return BadRequest();
+            }            
         }
 
         // GET: api/categories/{id}
-        [HttpGet("{id}")]
-        public ActionResult<CategoryDetailInfoModel> GetCategory(int id)
+        [HttpGet("{id}", Name = "GetCategory")]
+        public IActionResult Get([FromRoute]int id)
         {
-            var category = categoriesLogic.GetById(id);
-
-            if (category == null)
+            try
+            {
+                var category = this.categoriesLogic.GetById(id);
+                return Ok(new CategoryDetailInfoModel(category));
+            }
+            catch(ArgumentException)
             {
                 return NotFound();
             }
-
-            return Ok(new CategoryDetailInfoModel(category));
         }
 
         // POST: api/categories
         [HttpPost]
-        public ActionResult<CategoryModel> CreateCategory(Category category)
+        public IActionResult Post([FromBody]CategoryModel categoryModel)
         {
-            this.categoriesLogic.Create(category);
-            this.categoriesLogic.SaveChanges();
-
-            var newCategory = new CategoryModel(category);
-
-            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, newCategory);
-        }
-
-        // PUT: api/categories/{id}
-        [HttpPut("{id}")]
-        public ActionResult UpdateCategory(int id, Category category)
-        {
-            if (id != category.Id)
+            try
+            {
+                var cateogry = this.categoriesLogic.Add(categoryModel.ToEntity());
+                return CreatedAtRoute("GetCategory", new {id = cateogry.Id },
+                    new CategoryDetailInfoModel(cateogry));
+            }
+            catch(ArgumentNullException)
             {
                 return BadRequest();
             }
 
-            if (!CategoryExists(id))
-            {
-                return NotFound();
-            }
+        }
 
-            this.categoriesLogic.Update(category);
-            this.categoriesLogic.SaveChanges();
-
+        // PUT: api/categories/{id}
+        [HttpPut("{id}")]
+        public ActionResult Put([FromRoute]int id, [FromBody]CategoryModel category)
+        {
+            this.categoriesLogic.Update(id, category.ToEntity());
             return NoContent();
         }
 
@@ -78,22 +79,8 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteCommand(int id)
         {
-            var category = this.categoriesLogic.GetById(id);
-
-            if(category == null)
-            {
-                return NotFound();
-            }
-
-            this.categoriesLogic.Delete(category);
-            this.categoriesLogic.SaveChanges();
-
+            this.categoriesLogic.Delete(id);
             return NoContent();
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return categoriesLogic.Exists(id);
         }
     }
 }

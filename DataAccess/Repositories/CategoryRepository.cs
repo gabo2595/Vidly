@@ -17,7 +17,7 @@ namespace DataAccess.Repositories
             this.categories = context.Set<Category>();
         }
 
-        public void Create(Category category)
+        public void Add(Category category)
         {
             this.categories.Add(category);
         }
@@ -42,9 +42,9 @@ namespace DataAccess.Repositories
             return this.categories.FirstOrDefault(c => c.Id == id);
         }
 
-        public bool SaveChanges()
+        public void SaveChanges()
         {
-            return (this.vidlyContext.SaveChanges() >= 0);
+            this.vidlyContext.SaveChanges();
         }
 
         public void Update(Category category)

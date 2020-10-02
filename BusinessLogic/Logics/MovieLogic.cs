@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using BusinessLogicInterface.Interfaces;
 using DataAccessInterface.Interfaces;
 using Domain.Entities;
@@ -16,24 +15,30 @@ namespace BusinessLogic.Logics
             this.moviesRepository = moviesRepository;
         }
 
-        public void Create(Movie movie)
+        public Movie Add(Movie movie)
         {
             if(movie == null)
             {
-                throw new ArgumentNullException(nameof(movie));
+                throw new ArgumentNullException(nameof(movie), "Movie is invalid");
             }
 
-            this.moviesRepository.Create(movie);
+            this.moviesRepository.Add(movie);
+            this.moviesRepository.SaveChanges();
+
+            return this.moviesRepository.GetById(movie.Id);
         }
 
-        public void Delete(Movie movie)
+        public void Delete(int id)
         {
+            var movie = this.GetById(id);
+
+            if(movie == null)
+            {
+                throw new ArgumentException("Movie doesn't exist", "Id:" + id);
+            }
+
             this.moviesRepository.Delete(movie);
-        }
-
-        public bool Exists(int id)
-        {
-            return this.moviesRepository.Exists(id);
+            this.moviesRepository.SaveChanges();
         }
 
         public IEnumerable<Movie> GetAll()
@@ -43,22 +48,32 @@ namespace BusinessLogic.Logics
 
         public Movie GetById(int id)
         {
-            return this.moviesRepository.GetById(id);
+            var movie = this.moviesRepository.GetById(id);
+
+            if(movie == null)
+            {
+                throw new ArgumentNullException(nameof(movie), "movie doesn't exist");
+            }
+
+            return movie;
         }
 
-        public bool SaveChanges()
-        {
-            return this.moviesRepository.SaveChanges();
-        }
-
-        public void Update(Movie movie)
+        public void Update(int id, Movie movie)
         {
             if(movie == null)
             {
                 throw new ArgumentNullException(nameof(movie));
             }
 
-            this.moviesRepository.Update(movie);
+            if(!this.moviesRepository.Exists(id))
+            {
+                throw new ArgumentException("Movie doesn't exist", "Id:" + id);
+            }
+
+            var movieToUpdate = this.GetById(id);
+
+            this.moviesRepository.Update(movieToUpdate);
+            this.moviesRepository.SaveChanges();
         }
   }
 }

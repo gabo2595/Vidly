@@ -7,10 +7,8 @@ namespace BusinessLogicInterface.Interfaces
     {
         IEnumerable<Movie> GetAll();
         Movie GetById(int id);
-        void Create(Movie movie);
-        void Update(Movie movie);
-        void Delete(Movie movie);
-        bool Exists(int id);
-        bool SaveChanges();
+        Movie Add(Movie movie);
+        void Update(int id, Movie movie);
+        void Delete(int id);
     }
 }

@@ -17,7 +17,7 @@ namespace DataAccess.Repositories
             this.movies = context.Set<Movie>();
         }
 
-        public void Create(Movie movie)
+        public void Add(Movie movie)
         {
             this.movies.Add(movie);
         }
@@ -42,14 +42,14 @@ namespace DataAccess.Repositories
             return this.movies.FirstOrDefault(m => m.Id == id);
         }
 
-        public bool SaveChanges()
+        public void SaveChanges()
         {
-            return (this.vidlyContext.SaveChanges() >= 0);
+            this.vidlyContext.SaveChanges();
         }
 
         public void Update(Movie movie)
         {
             this.vidlyContext.Entry(movie).State = EntityState.Modified;
         }
-  }
+    }
 }

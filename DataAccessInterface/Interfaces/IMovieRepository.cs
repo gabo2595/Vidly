@@ -7,10 +7,10 @@ namespace DataAccessInterface.Interfaces
     {
         IEnumerable<Movie> GetAll();
         Movie GetById(int id);
-        void Create(Movie movie);
+        void Add(Movie movie);
         void Update(Movie movie);
         void Delete(Movie movie);
         bool Exists(int id);
-        bool SaveChanges();
+        void SaveChanges();
     }
 }

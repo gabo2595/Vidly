@@ -7,10 +7,10 @@ namespace DataAccessInterface.Interfaces
     {
         IEnumerable<Category> GetAll();
         Category GetById(int id);
-        void Create(Category category);
+        void Add(Category category);
         void Update(Category category);
         void Delete(Category category);
         bool Exists(int id);
-        bool SaveChanges();
+        void SaveChanges();
     }
 }

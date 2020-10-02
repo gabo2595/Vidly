@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BusinessLogicInterface.Interfaces;
@@ -21,79 +22,64 @@ namespace WebApi.Controllers
 
         // GET: api/movies
         [HttpGet]
-        public ActionResult<IEnumerable<MovieDetailInfoModel>> GetAllMovies()
+        public IActionResult Get()
         {
-            var movies = this.moviesLogic.GetAll();
-            
-            return Ok(movies.Select(m => new MovieDetailInfoModel(m)).ToList());
+            try
+            {
+                var movies = this.moviesLogic.GetAll();
+                return Ok(movies.Select(m => new MovieDetailInfoModel(m)).ToList());
+            }
+            catch(ArgumentNullException)
+            {
+                return BadRequest();
+            }
         }
 
         // GET: api/movies/{id}
-        [HttpGet("{id}")]
-        public ActionResult<MovieDetailInfoModel> GetMovie(int id)
+        [HttpGet("{id}", Name = "GetMovie")]
+        public IActionResult Get([FromRoute]int id)
         {
-            var movie = this.moviesLogic.GetById(id);
-
-            if (movie == null)
+            try
+            {
+                var movie = this.moviesLogic.GetById(id);
+                return Ok(new MovieDetailInfoModel(this.moviesLogic.GetById(id)));
+            }
+            catch(ArgumentNullException)
             {
                 return NotFound();
             }
-
-            return Ok(new MovieDetailInfoModel(movie));
         }
 
         // POST: api/movies
         [HttpPost]
-        public ActionResult<MovieModel> CreateMovie(Movie movie)
+        public IActionResult Post([FromBody]MovieModel movieModel)
         {
-            this.moviesLogic.Create(movie);
-            this.moviesLogic.SaveChanges();
-
-            var newMovie = new MovieModel(movie);
-
-            return CreatedAtAction("GetMovie", new { id = newMovie.Id }, newMovie);
+            try
+            {
+                var movie = this.moviesLogic.Add(movieModel.ToEntity());
+                return CreatedAtRoute("GetMovie", new {id = movie.Id },
+                    new MovieDetailInfoModel(movie));
+            }
+            catch(ArgumentNullException)
+            {
+                return BadRequest();
+            }
         }
 
         // PUT: api/movies/{id}
         [HttpPut("{id}")]
-        public ActionResult UpdateMovie(int id, Movie movie)
+        public ActionResult Put([FromRoute]int id, [FromBody]MovieModel movie)
         {
-            if (id != movie.Id)
-            {
-                return BadRequest();
-            }
-
-            if (!MovieExists(id))
-            {
-                return NotFound();
-            }
-
-            this.moviesLogic.Update(movie);
-            this.moviesLogic.SaveChanges();
-
+            this.moviesLogic.Update(id, movie.ToEntity());
             return NoContent();
         }
 
         //DELETE api/movies/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteCommand(int id)
+        public ActionResult Delete([FromRoute]int id)
         {
-            var movie = this.moviesLogic.GetById(id);
-
-            if(movie == null)
-            {
-                return NotFound();
-            }
-
-            this.moviesLogic.Delete(movie);
-            this.moviesLogic.SaveChanges();
-
+            this.moviesLogic.Delete(id);
             return NoContent();
-        }
-
-        private bool MovieExists(int id)
-        {
-            return moviesLogic.Exists(id);
         }
     }
 }

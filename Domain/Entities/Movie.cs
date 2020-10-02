@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,7 +14,7 @@ namespace Domain.Entities
         [DefaultValue(0)]
         public int AgeAllowed { get; set; }
 
-        public int? CategoryId { get; set; }
-        public virtual Category Category { get; set; }
-    }
+        public virtual List<CategoryMovie> CategoriesMovies { get; set; }
+  }
+
 }
